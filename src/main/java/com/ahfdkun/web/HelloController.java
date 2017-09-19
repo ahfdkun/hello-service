@@ -1,39 +1,26 @@
 package com.ahfdkun.web;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.metrics.CounterService;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-	
-	@Value("${student.name}")
-	private String name;
-	
-	@Value("#{'abcd'.length()}") // SpEL表达式
-	private int age;
-	
-	@Value("${student.desc}")
-	private String desc;
-	
-	@Value("${student.random.long}")
-	private long random_long;
-	
-	@Value("${student.random.int1}")
-	private int random_int1;
-	
-	@Value("${student.random.int2}")
-	private int random_int2;
-	
-	@Autowired
-	private CounterService couterService;
 
-	@RequestMapping("/hello")
-	public String hello() {
-		couterService.increment("didispace.hello.count");
-		System.out.println("student.name: " + name);
+	private final Logger logger = Logger.getLogger(HelloController.class);
+
+	@Autowired
+	private DiscoveryClient client; // 获取服务的信息
+
+	@RequestMapping(value = "/hello", method = RequestMethod.GET)
+	public String index() {
+		ServiceInstance instance = client.getLocalServiceInstance();
+		logger.info("/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
 		return "Hello World";
 	}
+
 }
