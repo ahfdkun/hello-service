@@ -26,7 +26,7 @@ public class HelloController {
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String hello() throws Exception {
 		ServiceInstance instance = client.getLocalServiceInstance();
-		int sleepTime = RandomUtils.nextInt(60000);
+		int sleepTime = RandomUtils.nextInt(6000);
 		logger.info("sleepTime: " + sleepTime);
 		Thread.sleep(sleepTime);
 		logger.info("/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
