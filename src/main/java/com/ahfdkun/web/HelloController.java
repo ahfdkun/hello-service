@@ -1,6 +1,9 @@
 package com.ahfdkun.web;
 
-import org.apache.commons.lang.math.RandomUtils;
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahfdkun.domain.User;
 import com.ahfdkun.domain.User2;
 
 @RestController
@@ -24,11 +26,14 @@ public class HelloController {
 	private DiscoveryClient client; // 获取服务的信息
 
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
-	public String hello() throws Exception {
+	public String hello(HttpServletRequest request) throws Exception {
+		System.out.println("-------------Print Sleuth Headers-------------");
+		Enumeration<String> headers = request.getHeaderNames();
+		while (headers.hasMoreElements()) {
+			String key = headers.nextElement();
+			System.out.println(key + "--------->" + request.getHeader(key));
+		}
 		ServiceInstance instance = client.getLocalServiceInstance();
-		int sleepTime = RandomUtils.nextInt(600);
-		logger.info("sleepTime: " + sleepTime);
-		Thread.sleep(sleepTime);
 		logger.info("/hello, host:" + instance.getHost() + ", service_id:" + instance.getServiceId());
 		return "Hello World";
 	}
